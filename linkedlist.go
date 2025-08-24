@@ -26,15 +26,15 @@ type LinkedList struct {
 	inserted int
 }
 
-type Node2 struct{
-	val int
+type Node2 struct {
+	val  int
 	next *Node2
 	prev *Node2
 }
 
-type DoubleLinkedList struct{
-	head *Node2
-	tail *Node2
+type DoubleLinkedList struct {
+	head     *Node2
+	tail     *Node2
 	inserted int
 }
 
@@ -56,17 +56,17 @@ func (list *LinkedList) Get(index int) (int, error) { //O(n), Ômega(1)
 	}
 }
 
-func (list *DoubleLinkedList) Get(index int) (int, error){
-	if index >= 0 && index < list.inserted{
-		if index <list.inserted/2{
-			aux:= list.head
-			for i:=0;i<index;i++{
+func (list *DoubleLinkedList) Get(index int) (int, error) {
+	if index >= 0 && index < list.inserted {
+		if index < list.inserted/2 {
+			aux := list.head
+			for i := 0; i < index; i++ {
 				aux = aux.next
 			}
 			return aux.val, nil
 		} else {
-			aux:= list.tail
-			for i:=list.inserted-1;i>index;i--{
+			aux := list.tail
+			for i := list.inserted - 1; i > index; i-- {
 				aux = aux.prev
 			}
 			return aux.val, nil
@@ -76,13 +76,13 @@ func (list *DoubleLinkedList) Get(index int) (int, error){
 	}
 }
 
-func (list *DoubleLinkedList) Add (val int) {
+func (list *DoubleLinkedList) Add(val int) {
 	newNode := &Node2{
-		val: val,
+		val:  val,
 		next: nil,
 		prev: nil,
 	}
-	if list.inserted == 0{
+	if list.inserted == 0 {
 		list.head = newNode
 		list.tail = newNode
 	} else {
@@ -93,15 +93,50 @@ func (list *DoubleLinkedList) Add (val int) {
 	list.inserted++
 }
 
-func (list *DoubleLinkedList) AddOnIndex (val int, index int) error {
-	if index >= 0 && index < list.inserted{
-		
-		
-	} else {
-		return -1, errors.New(fmt.Sprintf("Index inválido: %d", index))
-	}
-}
+func (list *DoubleLinkedList) AddOnIndex(val int, index int) error {
+	if index >= 0 && index < list.inserted {
+		newNode := &Node2{
+			val:  val,
+			next: nil,
+			prev: nil,
+		}
 
+		if index == 0 {
+			newNode.next = list.head
+			list.head.prev = newNode
+			list.head = newNode
+		} else {
+			if index < list.inserted/2 {
+				aux := list.head
+				for i := 0; i < index-1; i++ {
+					aux = aux.next
+				}
+				newNode.prev = aux
+				newNode.next = aux.next
+				aux.next.prev = newNode
+				aux.next = newNode
+			} else {
+				aux := list.tail
+				for i := list.inserted - 1; i > index; i-- {
+					aux = aux.prev
+				}
+				newNode.prev = aux.prev
+				newNode.next = aux
+				aux.prev.next = newNode
+				aux.prev = newNode
+			}
+		}
+	} else {
+		if index == list.inserted {
+			list.Add(val)
+			return nil
+		} else {
+			return errors.New(fmt.Sprintf("Index inválido: %d", index))
+		}
+	}
+	list.inserted++
+	return nil
+}
 
 func (list *LinkedList) Add(val int) {
 	newNode := &Node{
@@ -165,7 +200,7 @@ func (list *LinkedList) Remove(index int) error {
 }
 
 func main() {
-	l:=&LinkedList{}
+	l := &LinkedList{}
 	for i := 1; i <= 50; i++ {
 		l.Add(i)
 	}
