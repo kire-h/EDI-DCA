@@ -182,15 +182,13 @@ func (list *LinkedList) AddOnIndex(val int, index int) error {
 func (list *LinkedList) Remove(index int) error {
 	if index >= 0 && index < list.inserted {
 		if index == 0 {
-			list.head.next = list.head.next.next
-			list.inserted--
+			list.head = list.head.next
 		} else {
 			aux := list.head
 			for i := 0; i < index-1; i++ {
 				aux = aux.next
 			}
 			aux.next = aux.next.next
-			list.inserted--
 		}
 	} else {
 		return errors.New(fmt.Sprintf("Index inválido: %d", index))
@@ -199,25 +197,89 @@ func (list *LinkedList) Remove(index int) error {
 	return nil
 }
 
-func main() {
-	l := &LinkedList{}
-	for i := 1; i <= 50; i++ {
-		l.Add(i)
+func (list *DoubleLinkedList) Remove(index int) error {
+    if index < 0 || index >= list.inserted {
+        return errors.New(fmt.Sprintf("Index inválido: %d", index))
+    }
+    if list.inserted == 1 {
+        list.head = nil
+        list.tail = nil
+        list.inserted--
+        return nil
+    }
+    if index == 0 {
+        list.head = list.head.next
+        list.head.prev = nil
+        list.inserted--
+        return nil
+    }
+    if index == list.inserted-1 {
+        list.tail = list.tail.prev
+        list.tail.next = nil
+        list.inserted--
+        return nil
+    }
+    if index < list.inserted/2 {
+        aux := list.head
+        for i := 0; i < index-1; i++ {
+            aux = aux.next
+        }
+        aux.next = aux.next.next
+        aux.next.next.prev = aux
+    } else {
+        aux := list.tail
+        for i := list.inserted-1; i > index; i--{
+            aux = aux.prev
+        }
+        aux.prev.next = aux.next
+        aux.next.prev = aux.prev
+    }
+    list.inserted--
+    return nil
+}
+
+func (list *DoubleLinkedList) PrintForward() {
+	fmt.Print("Head -> ")
+	for aux := list.head; aux != nil; aux = aux.next {
+		fmt.Printf("%d ", aux.val)
 	}
-	val, _ := l.Get(0)
-	fmt.Println("Valor na posicao 0: ", val)
+	fmt.Println("<- Tail")
+}
 
-	val, _ = l.Get(49)
-	fmt.Println("Valor na posicao 49: ", val)
+func (list *DoubleLinkedList) PrintBackward() {
+	fmt.Print("Tail -> ")
+	for aux := list.tail; aux != nil; aux = aux.prev {
+		fmt.Printf("%d ", aux.val)
+	}
+	fmt.Println("<- Head")
+}
 
-	l.AddOnIndex(-1, 0)
 
-	val, _ = l.Get(0)
-	fmt.Println("Valor na posicao 0: ", val)
 
-	l.Remove(0)
+func main() {
+	list := &DoubleLinkedList{}
 
-	val, _ = l.Get(0)
-	fmt.Println("Valor na posicao 0: ", val)
+	// Adiciona no final
+	list.Add(10)
+	list.Add(20)
+	list.Add(30)
+	fmt.Println("Após Add:")
+	list.PrintForward()
+	list.PrintBackward()
 
+	// Adiciona em índice
+	list.AddOnIndex(15, 1)
+	list.AddOnIndex(5, 0)
+	list.AddOnIndex(35, 5)
+	fmt.Println("\nApós AddOnIndex:")
+	list.PrintForward()
+	list.PrintBackward()
+
+	// Remove elementos
+	list.Remove(0) // remove o primeiro
+	list.Remove(2) // remove do meio
+	list.Remove(list.inserted - 1) // remove o último
+	fmt.Println("\nApós Remove:")
+	list.PrintForward()
+	list.PrintBackward()
 }
