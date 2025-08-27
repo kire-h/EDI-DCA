@@ -12,6 +12,12 @@ type List interface {
 	Add(e int)
 	AddOnIndex(e int, index int) error
 	Remove(index int) error
+	invert() 
+}
+
+type ArrayList struct {
+	inserted int
+	v [] int
 }
 
 // struct node que armazena um valor e um ponteiro para o proximo node
@@ -38,9 +44,22 @@ type DoubleLinkedList struct {
 	inserted int
 }
 
+func (list *ArrayList) Size() int {
+	return list.inserted
+}
 // retorna o inserted do objeto list que é uma linkedlist
 func (list *LinkedList) Size() int { //Theta(1)
 	return list.inserted
+}
+func (list* DoubleLinkedList) Size() int {
+	return list.inserted
+}
+func (list *ArrayList) Get(index int) (int,error) {
+	if index >= 0 && index < list.inserted {
+		return list.v[index], nil 
+	} else {
+		return -1, errors.New(fmt.Sprintf("Index inválido: %d", index))
+	}
 }
 
 // retorna o valor de um indice percorrendo os nodes da minha lista
@@ -76,6 +95,26 @@ func (list *DoubleLinkedList) Get(index int) (int, error) {
 	}
 }
 
+func (list *ArrayList) Add(val int){
+	if len(list.v) == list.inserted{
+		list.DoubleV()
+	} 
+	list.v[list.inserted] = val
+	list.inserted++
+}
+
+func (list *ArrayList) DoubleV(){
+	newSize := len(list.v)*2
+	if newSize == 0{
+		newSize = 1
+	}
+	newV := make([] int, newSize)
+	for i:= 0;i<list.inserted;i++{
+		newV[i] = list.v[i]
+	}
+	list.v = newV
+}
+
 func (list *DoubleLinkedList) Add(val int) {
 	newNode := &Node2{
 		val:  val,
@@ -91,6 +130,34 @@ func (list *DoubleLinkedList) Add(val int) {
 		list.tail = newNode
 	}
 	list.inserted++
+}
+
+func (list *ArrayList) AddOnIndex(val int, index int) error {
+	if index >= 0 && index < list.inserted{
+		if len(list.v) == list.inserted{
+			list.DoubleV()
+		}	
+		for i:=list.inserted; i>index; i--{
+			list.v[i] = list.v[i-1]
+		}
+		list.v[index] = val
+		list.inserted++
+		return nil	
+	} else {
+		return errors.New(fmt.Sprintf("Index inválido: %d", index))
+	}
+}
+
+func (list *ArrayList) Remove(index int) error {
+	if index >= 0 && index < list.inserted {
+		for i:=index; i<list.inserted; i++{
+			list.v[i] = list.v[i+1]
+		}
+		list.inserted--
+		return nil
+	} else {
+		return errors.New(fmt.Sprintf("Index inválido: %d", index)) 
+	}
 }
 
 func (list *DoubleLinkedList) AddOnIndex(val int, index int) error {
@@ -198,44 +265,44 @@ func (list *LinkedList) Remove(index int) error {
 }
 
 func (list *DoubleLinkedList) Remove(index int) error {
-    if index < 0 || index >= list.inserted {
-        return errors.New(fmt.Sprintf("Index inválido: %d", index))
-    }
-    if list.inserted == 1 {
-        list.head = nil
-        list.tail = nil
-        list.inserted--
-        return nil
-    }
-    if index == 0 {
-        list.head = list.head.next
-        list.head.prev = nil
-        list.inserted--
-        return nil
-    }
-    if index == list.inserted-1 {
-        list.tail = list.tail.prev
-        list.tail.next = nil
-        list.inserted--
-        return nil
-    }
-    if index < list.inserted/2 {
-        aux := list.head
-        for i := 0; i < index-1; i++ {
-            aux = aux.next
-        }
-        aux.next = aux.next.next
-        aux.next.next.prev = aux
-    } else {
-        aux := list.tail
-        for i := list.inserted-1; i > index; i--{
-            aux = aux.prev
-        }
-        aux.prev.next = aux.next
-        aux.next.prev = aux.prev
-    }
-    list.inserted--
-    return nil
+	if index < 0 || index >= list.inserted {
+		return errors.New(fmt.Sprintf("Index inválido: %d", index))
+	}
+	if list.inserted == 1 {
+		list.head = nil
+		list.tail = nil
+		list.inserted--
+		return nil
+	}
+	if index == 0 {
+		list.head = list.head.next
+		list.head.prev = nil
+		list.inserted--
+		return nil
+	}
+	if index == list.inserted-1 {
+		list.tail = list.tail.prev
+		list.tail.next = nil
+		list.inserted--
+		return nil
+	}
+	if index < list.inserted/2 {
+		aux := list.head
+		for i := 0; i < index-1; i++ {
+			aux = aux.next
+		}
+		aux.next = aux.next.next
+		aux.next.next.prev = aux
+	} else {
+		aux := list.tail
+		for i := list.inserted - 1; i > index; i-- {
+			aux = aux.prev
+		}
+		aux.prev.next = aux.next
+		aux.next.prev = aux.prev
+	}
+	list.inserted--
+	return nil
 }
 
 func (list *DoubleLinkedList) PrintForward() {
@@ -253,8 +320,6 @@ func (list *DoubleLinkedList) PrintBackward() {
 	}
 	fmt.Println("<- Head")
 }
-
-
 
 func main() {
 	list := &DoubleLinkedList{}
@@ -276,8 +341,8 @@ func main() {
 	list.PrintBackward()
 
 	// Remove elementos
-	list.Remove(0) // remove o primeiro
-	list.Remove(2) // remove do meio
+	list.Remove(0)                 // remove o primeiro
+	list.Remove(2)                 // remove do meio
 	list.Remove(list.inserted - 1) // remove o último
 	fmt.Println("\nApós Remove:")
 	list.PrintForward()
