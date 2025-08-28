@@ -321,6 +321,39 @@ func (list *DoubleLinkedList) PrintBackward() {
 	fmt.Println("<- Head")
 }
 
+func (list *ArrayList) invert() {
+	for i:=0; i<list.inserted/2; i++{
+		aux:= list.v[list.inserted-i-1]
+		list.v[i] = list.v[list.inserted-i-1]
+		list.v[list.inserted-1-i] = aux
+	}
+}
+
+func (list *LinkedList) invert(){
+	curr:= list.head
+	var prev, next * Node
+	for i:=0; i<list.inserted; i++{
+		next = curr.next
+		curr.next = prev
+		prev = curr
+		curr = next
+	}
+	list.head = prev
+}
+
+func (list *DoubleLinkedList) invert(){
+	curr:= list.head
+	prev:= list.tail
+	var next * Node2
+	for i:=0; i<list.inserted; i++{
+		next = curr.next
+		curr.next = prev
+		curr.prev = next
+		curr = curr.prev
+	}
+	list.head, list.tail = list.tail, list.head
+}
+
 func main() {
 	list := &DoubleLinkedList{}
 
