@@ -14,6 +14,17 @@ type dequeue interface {
 	Front() (int, error)
 	Back() (int, error)
 }
+type Node4 struct{
+	next *Node4
+	prev *Node4
+	value int
+}
+
+type LinkedDequeue struct{
+	rear * Node4
+	front * Node4
+	inserted int
+}
 
 type ArrayDequeue struct {
 	rear  int
@@ -42,6 +53,40 @@ func (deck *ArrayDequeue) push_front(val int) {
 		}
 	}
 	deck.v[deck.front] = val
+}
+
+func (deck *LinkedDequeue) push_front(val int){
+	newNode := &Node4{
+		next:nil,
+		prev:nil,
+		value: val,
+	}
+	if deck.front == nil{
+		deck.front = newNode
+		deck.rear = newNode
+	} else {
+	newNode.next = deck.front
+	deck.front.prev = newNode
+	deck.front = newNode
+	}
+	deck.inserted++
+}
+
+func (deck *LinkedDequeue) push_back(val int){
+	newNode := &Node4{
+		next:nil,
+		prev:nil,
+		value: val,
+	}
+	if deck.rear == nil{
+		deck.front = newNode
+		deck.rear = newNode
+	} else {
+		newNode.prev = deck.rear
+		deck.rear.next = newNode
+		deck.rear = newNode
+	}
+	deck.inserted++
 }
 
 func (deck *ArrayDequeue) push_back(val int) {
@@ -84,6 +129,24 @@ func (deck *ArrayDequeue) pull_front() (int, error) {
 	}
 }
 
+func (deck *LinkedDequeue) pull_front()(int, error){
+	if deck.front == nil && deck.rear == nil{
+		return -1,errors.New("Fila Vazia")
+	} else if deck.front == deck.rear{
+		aux := deck.front.value
+		deck.front = nil
+		deck.rear = nil
+		deck.inserted--
+		return aux,nil
+	} else{
+		aux := deck.front.value
+		deck.front = deck.front.next
+		deck.front.prev = nil
+		deck.inserted--
+		return aux,nil
+	}
+}
+
 func (deck *ArrayDequeue) pull_back() (int, error) {
 	if deck.front == -1 && deck.rear == -1 {
 		return -1, errors.New("Fila Vazia")
@@ -103,6 +166,24 @@ func (deck *ArrayDequeue) pull_back() (int, error) {
 	}
 }
 
+func (deck * LinkedDequeue) pull_back() (int, error) {
+	if deck.front == nil && deck.rear == nil {
+		return -1, errors.New("Fila Vazia")
+	} else if deck.front == deck.rear {
+		aux:= deck.rear.value
+		deck.rear = nil
+		deck.front = nil
+		deck.inserted--
+		return aux,nil
+	} else {
+		aux:= deck.rear.value
+		deck.rear = deck.rear.prev
+		deck.rear.next = nil
+		deck.inserted--
+		return aux,nil
+	}
+}
+
 func (deck *ArrayDequeue) size() int {
 	if deck.front == -1 && deck.rear == -1 {
 		return 0
@@ -113,6 +194,10 @@ func (deck *ArrayDequeue) size() int {
 	}
 }
 
+func (deck *LinkedDequeue) size() int{
+	return deck.inserted
+}
+
 func (deck *ArrayDequeue) Front() (int, error) {
 	if deck.front == -1 && deck.rear == -1 {
 		return -1, errors.New("Fila Vazia")
@@ -120,11 +205,25 @@ func (deck *ArrayDequeue) Front() (int, error) {
 	return deck.v[deck.front], nil
 }
 
+func(deck *LinkedDequeue) Front() (int, error){
+	if deck.front == nil && deck.rear == nil{
+		return -1, errors.New("Fila Vazia")
+	}
+	return deck.front.value,nil
+}
+
 func (deck *ArrayDequeue) Back() (int, error) {
 	if deck.front == -1 && deck.rear == -1 {
 		return -1, errors.New("Fila Vazia")
 	}
 	return deck.v[deck.rear], nil
+}
+
+func(deck *LinkedDequeue) Back() (int, error){
+	if deck.front == nil && deck.rear == nil{
+		return -1, errors.New("Fila Vazia")
+	}
+	return deck.rear.value,nil
 }
 
 func (deck *ArrayDequeue) print() {
@@ -139,6 +238,14 @@ func (deck *ArrayDequeue) print() {
 		i = (i + 1) % len(deck.v)
 	}
 	fmt.Println()
+}
+
+func (deck *LinkedDequeue) print(){
+	aux := deck.front 
+	for i:=0; i<deck.inserted;i++{
+		fmt.Printf("%d ",aux.value)
+		aux = aux.next
+	}
 }
 
 func main() {
