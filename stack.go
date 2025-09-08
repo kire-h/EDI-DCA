@@ -5,31 +5,32 @@ import (
 	"fmt"
 )
 
-type Stack interface{
+type Stack interface {
 	Push(value int)
-	Pop()(int , error)
-	Top()(int , error)
+	Pop() (int, error)
+	Top() (int, error)
 	IsEmpty() bool
 	Size() int
 }
 
-type ArrayStack struct{
+type ArrayStack struct {
 	inserted int
-	top int
-	v []int
+	top      int
+	v        []int
 }
 
-type Node3 struct{
+type Node3 struct {
 	value int
-	next * Node3
+	next  *Node3
 }
 
-type LinkedStack struct{
-	top * Node3
+type LinkedStack struct {
+	top      *Node3
 	inserted int
 }
-func (stack *ArrayStack) Push(value int){
-	if stack.inserted == len(stack.v){
+
+func (stack *ArrayStack) Push(value int) {
+	if stack.inserted == len(stack.v) {
 		stack.doubleV()
 	}
 	stack.v[stack.top] = value
@@ -37,35 +38,35 @@ func (stack *ArrayStack) Push(value int){
 	stack.inserted++
 }
 
-func (stack *ArrayStack) doubleV(){
-	newS:= len(stack.v)
-	if newS == 0{
+func (stack *ArrayStack) doubleV() {
+	newS := len(stack.v)
+	if newS == 0 {
 		newS = 1
 	}
-	newV := make([] int, newS*2)
-	for i:=0;i<stack.inserted;i++{
+	newV := make([]int, newS*2)
+	for i := 0; i < stack.inserted; i++ {
 		newV[i] = stack.v[i]
 	}
 	stack.v = newV
 }
 
-func (stack *ArrayStack) Pop() (int, error){
-	if stack.IsEmpty(){
+func (stack *ArrayStack) Pop() (int, error) {
+	if stack.IsEmpty() {
 		return -1, errors.New(fmt.Sprintf("lista vazia"))
 	}
-	stack.top = stack.top-1
+	stack.top = stack.top - 1
 	stack.inserted--
-	return stack.v[stack.top],nil
+	return stack.v[stack.top], nil
 }
 
-func (stack *ArrayStack) Top() (int, error){
-	if stack.IsEmpty(){
+func (stack *ArrayStack) Top() (int, error) {
+	if stack.IsEmpty() {
 		return -1, errors.New(fmt.Sprintf("lista vazia"))
 	}
-	return stack.v[stack.top-1],nil
+	return stack.v[stack.top-1], nil
 }
 
-func (stack *ArrayStack) IsEmpty() bool{
+func (stack *ArrayStack) IsEmpty() bool {
 	if stack.inserted == 0 {
 		return true
 	} else {
@@ -73,46 +74,46 @@ func (stack *ArrayStack) IsEmpty() bool{
 	}
 }
 
-func (stack *ArrayStack) Size() int{
+func (stack *ArrayStack) Size() int {
 	return stack.inserted
 }
 
-func (stack *LinkedStack) Push(value int){
+func (stack *LinkedStack) Push(value int) {
 	newNode := &Node3{
 		value: value,
-		next: nil,
+		next:  nil,
 	}
 	newNode.next = stack.top
 	stack.top = newNode
 	stack.inserted++
 }
 
-func (stack *LinkedStack) Pop() (int,error){
-	if stack.IsEmpty(){
+func (stack *LinkedStack) Pop() (int, error) {
+	if stack.IsEmpty() {
 		return -1, errors.New(fmt.Sprintf("lista vazia"))
 	}
-	aux:= stack.top.value
+	aux := stack.top.value
 	stack.top = stack.top.next
 	stack.inserted--
-	return aux,nil 
+	return aux, nil
 }
 
-func (stack *LinkedStack) Top() (int,error){
-	if stack.IsEmpty(){
+func (stack *LinkedStack) Top() (int, error) {
+	if stack.IsEmpty() {
 		return -1, errors.New(fmt.Sprintf("lista vazia"))
 	}
-	return stack.top.value,nil
+	return stack.top.value, nil
 }
 
-func (stack *LinkedStack) IsEmpty() bool{
-	if stack.inserted == 0{
+func (stack *LinkedStack) IsEmpty() bool {
+	if stack.inserted == 0 {
 		return true
-	} else{
+	} else {
 		return false
 	}
 }
 
-func (stack *LinkedStack) Size() int{
+func (stack *LinkedStack) Size() int {
 	return stack.inserted
 }
 
@@ -154,12 +155,44 @@ func testStack(s Stack, name string) {
 	}
 }
 
+func balparenteses(par string) bool {
+	stack := &LinkedStack{}
+	for i := 0; i < len(par); i++ {
+		d := par[i]
+		if d == '(' {
+			stack.Push(0)
+		} else if d == ')' {
+			if stack.IsEmpty() {
+				return false
+			}
+			stack.Pop()
+		}
+	}
+	if stack.Size() == 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
 func main() {
 	// Testando ArrayStack (precisa de slice inicial para não dar panic)
 	testStack(&ArrayStack{v: make([]int, 1)}, "ArrayStack")
 
 	// Testando LinkedStack
 	testStack(&LinkedStack{}, "LinkedStack")
+
+	testes := []string{
+		"()",     // true
+		"(())",   // true
+		"(()())", // true
+		")(",     // false
+		"(()",    // false
+		"())",    // false
+		"",       // true
+	}
+
+	for _, t := range testes {
+		fmt.Printf("balparenteses(%q) = %v\n", t, balparenteses(t))
+	}
 }
-
-
