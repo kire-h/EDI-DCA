@@ -1,3 +1,11 @@
+package main
+
+import(
+    "fmt"
+    "errors"
+)
+
+
 func binarySearch(start int, end int, val int, list []int) int{
 	if start > end{
 		return -1
@@ -29,6 +37,37 @@ func bin_Search(val int, list []int) int {
             start = mid + 1
         }
     }
+    return -1
+}
 
+func ReverseBin_search(val int, start int, end int, list []int) int {
+    if start > end{
+        return -1 
+    }
+    mid := (start+end)/2
+    if list[mid] == val{
+        return mid
+    }
+    if list[mid] > val{
+        return ReverseBin_search(val, mid+1, end, list)
+    } else {
+        return ReverseBin_search(val, start, mid-1, list)
+    }
+}
+
+func ReverseBin_search2(val int, list []int) int{
+    start:=0
+    end:=len(list)-1
+    for start <= end{
+        mid := (start+end)/2
+        if list[mid] == val{
+            return mid
+        }
+        if list[mid] > val{
+            start = mid+1
+        } else {
+            end = mid-1
+        }
+    }
     return -1
 }
