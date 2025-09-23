@@ -2,16 +2,22 @@ package main
 
 import "fmt"
 
-func BubbleSort(v []int) []int {
-	for varredura := 0; varredura < len(v)-1; varredura++ {
-		for i := 0; i < len(v)-varredura-1; i++ {
-			if v[i] > v[i+1] {
-				v[i], v[i+1] = v[i+1], v[i]
+func BubbleSort(v [] int) [] int{
+	for varredura:= 0; varredura < len(v)-1; varredura++{
+		trocou:= false
+		for i:=0; i<len(v)-varredura-1; i++{
+			if v[i] > v[i+1]{
+				v[i],v[i+1] = v[i+1],v[i]
+				trocou = true
+			}
+			if !trocou{
+				return 
 			}
 		}
 	}
 	return v
 }
+
 
 func main() {
 	// Test array
