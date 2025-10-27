@@ -22,14 +22,14 @@ func counting_sort(v []int) []int {
 		c[v[i]-menor]++
 	}
 	//passo 4 - fazer a soma comulativa no vetor de contagem
-	for i := 0; i < len(v); i++ {
+	for i := 0; i < len(c)-1; i++ {
 		c[i+1] += c[i]
 	}
 	//passo 5 - criar outro vetor que será usando para posicionar os elementos de maneira ordenada
 	ord := make([]int, len(v))
 
 	for i := 0; i < len(v); i++ {
-		ord[c[v[i]-menor]+1] = v[i]
+		ord[c[v[i]-menor]-1] = v[i]
 		c[v[i]-menor]--
 	}
 	return ord
