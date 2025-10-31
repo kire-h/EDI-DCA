@@ -76,7 +76,7 @@ func (no *node) SearchNode(val int) bool {
 		if no.left == nil {
 			return false
 		} else {
-			return no.left.left.SearchNode(val)
+			return no.left.SearchNode(val)
 		}
 	} else {
 		if no.right == nil {
@@ -188,10 +188,10 @@ func (no *node) LevelOrder() { // se noh é nill retorno
 	for len(queue) > 0 { // enquanto tiver elementos na fila
 		n := len(queue) // numero de elementos a serem processados
 		for i := 0; i < n; i++ {
-			no := queue[0]          //coloco o primeiro elemento em no
-			fmt.Print("%d", no.val) //processo
-			queue = queue[1:]       //tiro da fila
-			if no.left != nil {     //coloco os elementos a esqueda e a direita de no na fila se existirem para o processamento
+			no := queue[0]           //coloco o primeiro elemento em no
+			fmt.Printf("%d", no.val) //processo
+			queue = queue[1:]        //tiro da fila
+			if no.left != nil {      //coloco os elementos a esqueda e a direita de no na fila se existirem para o processamento
 				queue = append(queue, no.left)
 			}
 			if no.right != nil {
@@ -231,7 +231,7 @@ func (no *node) Remove(val int) (*node, bool) {
 		// se ele é um noh folha eu retorno nil para o lugar seu pai
 		if no.left == nil && no.right == nil {
 			return nil, removed
-		} else if no.left != nil && no.right != nil { // se ele é um noh com um filho só eu retorno seu unico filho para o lugar de seu pai
+		} else if no.left != nil && no.right == nil { // se ele é um noh com um filho só eu retorno seu unico filho para o lugar de seu pai
 			return no.left, removed
 		} else if no.left == nil && no.right != nil { //mesmo caso
 			return no.right, removed
