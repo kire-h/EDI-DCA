@@ -5,7 +5,7 @@ import (
 )
 
 func selection_sort(v []int) {
-	for i := 0; i < len(v)-1; i++ { // nuemro de iterações necessarias para ordenar
+	for i := 0; i < len(v)-1; i++ { // numero de iterações necessarias para ordenar
 		menor := i                        // quando eu faço a ultima iteração o ultimo elemento ja está em seu lugar
 		for j := i + 1; j < len(v); j++ { //percorrendo todos os elementos do vetor a direita do i para encontrar o menor
 			if v[j] < v[menor] {

@@ -27,7 +27,7 @@ func counting_sort(v []int) []int {
 	}
 	//passo 5 - criar outro vetor que será usando para posicionar os elementos de maneira ordenada
 	ord := make([]int, len(v))
-
+	//passo 6 - mapear os valores de forma ordenada usando c
 	for i := 0; i < len(v); i++ {
 		ord[c[v[i]-menor]-1] = v[i]
 		c[v[i]-menor]--
