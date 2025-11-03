@@ -15,6 +15,14 @@ func selection_sort(v []int) {
 		v[i], v[menor] = v[menor], v[i] // realizo a troca do indice atual com o indice do menor
 	}
 }
+// 0 1 2 3 4
+//[1,2,3,4,5]
+//len(v) = 5
+//1 até 4 n-1 
+//2 até 4 n-2
+//3 até 4 n-3
+
+//n-1 + n-2 + n-3 + ... + 1 = n(n-1)/2 
 
 // teste:
 // 8, 2, 4, 3, 7

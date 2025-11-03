@@ -243,3 +243,62 @@ func (no *node) Remove(val int) (*node, bool) {
 	}
 	return no, removed //retorno o no e o bool se foi removido ou não
 }
+
+// func isBst
+func (no *node) IsBst(min int, max int) bool {
+	if no == nil { //se no == nil returna true
+		return true
+	}
+	if no.val >= max || no.val < min { //verifica se o noh está dentro do intervalo
+		return false //se estiver fora retorna false
+	}
+	return no.left.IsBst(min, no.val) && no.right.IsBst(no.val, max)
+	//retorna que todos os valores da esquerda tem q ser menores que no.val
+	//e todos os valores a direita maiores que no.val
+}
+
+func (no *node) Size() int {
+	countL := 0
+	countR := 0
+	if no.left != nil {
+		countL += 1 + no.left.Size()
+	}
+	if no.right != nil {
+		countR += 1 + no.right.Size()
+	}
+	return 1 + countR + countL
+}
+
+// func para transformar um vetor em uma arvore
+func convertToBalancedBst(v []int, ini int, fim int) *node {
+	if ini > fim {
+		return nil
+	}
+	mid := (ini + fim) / 2
+	no := &node{
+		val:   v[mid],
+		left:  convertToBalancedBst(v, ini, mid-1),
+		right: convertToBalancedBst(v, mid+1, fim),
+	}
+	return no
+}
+
+// func para contar o numero de pares numa arvore
+func (no *node) Par() int {
+	countL := 0
+	countR := 0
+	if no == nil {
+		return 0
+	}
+	if no.left != nil {
+		countL += no.left.Par()
+	}
+	if no.right != nil {
+		countR += no.right.Par()
+	}
+	if no.val%2 == 0 {
+		return 1 + countL + countR
+	} else {
+		return countL + countR
+	}
+}
